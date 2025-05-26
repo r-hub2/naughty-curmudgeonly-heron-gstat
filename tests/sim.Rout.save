@@ -1,0 +1,47 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(digits=6)
+> library(sp)
+> data(meuse)
+> set.seed(158229572)
+> new.locs <- data.frame(x = c(181170, 180310, 180205, 178673, 178770, 178270),
++ 	y = c(333250, 332189, 331707, 330066, 330675, 331075))
+> library(gstat)
+> krige(zinc ~ 1, ~ x + y, meuse, newdata = new.locs, 
++ 		model = vgm(1.34e5, "Sph", 800, nug = 2.42e4), 
++ 		block = c(40,40), nmax = 40, nsim = 10)
+drawing 10 GLS realisations of beta...
+[using conditional Gaussian simulation]
+       x      y     sim1      sim2    sim3    sim4    sim5    sim6    sim7
+1 181170 333250  267.385   27.5686 428.144 381.576 151.119 175.890 293.273
+2 180310 332189  429.437  659.6579 564.023 611.666 612.756 619.791 771.961
+3 180205 331707  205.978  412.7276 271.827 380.349 169.488 369.822 266.026
+4 178673 330066  117.479  684.0663 399.148 585.096 606.396 867.866 807.634
+5 178770 330675  780.072  837.4628 682.690 911.052 600.984 783.019 749.476
+6 178270 331075 1025.778 1582.0269 614.235 332.377 660.228 589.447 972.018
+      sim8    sim9    sim10
+1  294.107 113.347  279.991
+2  776.498 724.160  901.692
+3  338.021 630.244  140.272
+4  127.301 957.242  444.007
+5  533.773 748.144  623.960
+6 1084.170 537.604 -214.972
+> 
+> proc.time()
+   user  system elapsed 
+  0.467   0.020   0.479 

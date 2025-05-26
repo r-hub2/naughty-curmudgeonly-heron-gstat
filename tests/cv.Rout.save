@@ -1,0 +1,102 @@
+
+R Under development (unstable) (2025-02-03 r87683 ucrt) -- "Unsuffered Consequences"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # try bivariate cokriging; cross validate first variable
+> library(sp)
+> data(meuse)
+> library(gstat)
+> g=gstat(NULL, "log-zinc", log(zinc)~1,  ~x+y, meuse, nmax=10)
+> g=gstat(g, "log-lead", log(lead)~1,     ~x+y, meuse, nmax=10)
+> g=gstat(g, "log-copper", log(copper)~1, ~x+y, meuse, nmax=10)
+> v=variogram(g)
+> g=gstat(g, model=vgm(1, "Sph", 1000), fill.all=T)
+> g=fit.lmc(v, g)
+> g
+data:
+log-zinc : formula = log(zinc)`~`1 ; data dim = 155 x 12 nmax = 10
+log-lead : formula = log(lead)`~`1 ; data dim = 155 x 12 nmax = 10
+log-copper : formula = log(copper)`~`1 ; data dim = 155 x 12 nmax = 10
+variograms:
+                    model     psill range
+log-zinc              Sph 0.7132435  1000
+log-lead              Sph 0.6133020  1000
+log-copper            Sph 0.3634211  1000
+log-zinc.log-lead     Sph 0.6367012  1000
+log-zinc.log-copper   Sph 0.4570044  1000
+log-lead.log-copper   Sph 0.3934910  1000
+~x + y
+> set.seed(13131)
+> summary(gstat.cv(g, remove.all=TRUE, nfold=5))
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+ log.zinc.pred    log.zinc.var        observed        residual        
+ Min.   :4.779   Min.   :0.05426   Min.   :4.727   Min.   :-1.317697  
+ 1st Qu.:5.396   1st Qu.:0.10872   1st Qu.:5.288   1st Qu.:-0.230224  
+ Median :5.858   Median :0.13745   Median :5.787   Median :-0.034374  
+ Mean   :5.895   Mean   :0.15249   Mean   :5.886   Mean   :-0.009094  
+ 3rd Qu.:6.367   3rd Qu.:0.18303   3rd Qu.:6.514   3rd Qu.: 0.244075  
+ Max.   :7.358   Max.   :0.60571   Max.   :7.517   Max.   : 1.414147  
+     zscore              fold             x                y         
+ Min.   :-3.35764   Min.   :1.000   Min.   :178605   Min.   :329714  
+ 1st Qu.:-0.58683   1st Qu.:2.000   1st Qu.:179371   1st Qu.:330762  
+ Median :-0.10755   Median :3.000   Median :179991   Median :331633  
+ Mean   :-0.02766   Mean   :2.852   Mean   :180005   Mean   :331635  
+ 3rd Qu.: 0.70691   3rd Qu.:4.000   3rd Qu.:180630   3rd Qu.:332463  
+ Max.   : 3.43370   Max.   :5.000   Max.   :181390   Max.   :333611  
+Warning message:
+In checkNames(value) :
+  attempt to set invalid names: this may lead to problems later on. See ?make.names
+> summary(gstat.cv(g, remove.all=FALSE, nfold=5))
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+ log.zinc.pred    log.zinc.var         observed        residual         
+ Min.   :4.644   Min.   :0.002371   Min.   :4.727   Min.   :-0.4190976  
+ 1st Qu.:5.308   1st Qu.:0.004975   1st Qu.:5.288   1st Qu.:-0.0773273  
+ Median :5.777   Median :0.005875   Median :5.787   Median : 0.0006165  
+ Mean   :5.883   Mean   :0.006609   Mean   :5.886   Mean   : 0.0026164  
+ 3rd Qu.:6.422   3rd Qu.:0.007419   3rd Qu.:6.514   3rd Qu.: 0.0825770  
+ Max.   :7.676   Max.   :0.027247   Max.   :7.517   Max.   : 0.4659503  
+     zscore               fold             x                y         
+ Min.   :-4.793253   Min.   :1.000   Min.   :178605   Min.   :329714  
+ 1st Qu.:-1.080725   1st Qu.:2.000   1st Qu.:179371   1st Qu.:330762  
+ Median : 0.007242   Median :3.000   Median :179991   Median :331633  
+ Mean   : 0.050487   Mean   :2.974   Mean   :180005   Mean   :331635  
+ 3rd Qu.: 1.117469   3rd Qu.:4.000   3rd Qu.:180630   3rd Qu.:332463  
+ Max.   : 6.475831   Max.   :5.000   Max.   :181390   Max.   :333611  
+Warning message:
+In checkNames(value) :
+  attempt to set invalid names: this may lead to problems later on. See ?make.names
+> 
+> proc.time()
+   user  system elapsed 
+   1.31    0.09    1.39 

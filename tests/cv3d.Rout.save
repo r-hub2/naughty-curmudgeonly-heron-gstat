@@ -1,0 +1,48 @@
+
+R Under development (unstable) (2025-02-03 r87683 ucrt) -- "Unsuffered Consequences"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(digits = 4)
+> set.seed(1131)
+> d = data.frame(x=runif(50),y=runif(50),z=runif(50),v=rnorm(50))
+> library(gstat)
+> xx = krige.cv(v~1,~x+y+z,d,model=vgm(1,"Exp",1), verbose=F, set=list(debug=0))
+> summary(xx)
+   var1.pred         var1.var        observed         residual      
+ Min.   :-1.163   Min.   :0.116   Min.   :-2.240   Min.   :-2.1755  
+ 1st Qu.:-0.571   1st Qu.:0.175   1st Qu.:-0.876   1st Qu.:-0.7881  
+ Median :-0.201   Median :0.192   Median :-0.219   Median : 0.1175  
+ Mean   :-0.165   Mean   :0.208   Mean   :-0.142   Mean   : 0.0233  
+ 3rd Qu.: 0.161   3rd Qu.:0.240   3rd Qu.: 0.501   3rd Qu.: 0.8508  
+ Max.   : 1.085   Max.   :0.426   Max.   : 1.857   Max.   : 2.5224  
+     zscore             fold            x                 y         
+ Min.   :-5.1678   Min.   : 1.0   Min.   :0.00678   Min.   :0.0034  
+ 1st Qu.:-1.8749   1st Qu.:13.2   1st Qu.:0.23966   1st Qu.:0.2466  
+ Median : 0.2453   Median :25.5   Median :0.48668   Median :0.4525  
+ Mean   : 0.0167   Mean   :25.5   Mean   :0.49966   Mean   :0.4969  
+ 3rd Qu.: 2.0201   3rd Qu.:37.8   3rd Qu.:0.74730   3rd Qu.:0.7394  
+ Max.   : 7.3541   Max.   :50.0   Max.   :0.98754   Max.   :0.9872  
+       z          
+ Min.   :0.00164  
+ 1st Qu.:0.18646  
+ Median :0.44850  
+ Mean   :0.47142  
+ 3rd Qu.:0.72403  
+ Max.   :0.99420  
+> 
+> proc.time()
+   user  system elapsed 
+   1.23    0.17    1.39 

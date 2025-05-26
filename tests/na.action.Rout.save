@@ -1,0 +1,90 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(sp)
+> 
+> data(meuse)
+> data(meuse.grid)
+> 
+> set.seed(13131) # reproduce results
+> 
+> # select 10 random rows;
+> # create two missing values in the coordinates:
+> m = meuse.grid[sample(nrow(meuse.grid), 10), ]
+> m[c(2,8), "x"] = NA
+> 
+> library(gstat)
+> ## this is not allowed anymore:
+> try(krige(log(zinc)~1,~x+y,meuse,m, na.action = na.pass))
+Error in na.fail.default(structure(list(x = c(179220, NA, 178740, 179300,  : 
+  missing values in object
+> try(krige(log(zinc)~1,~x+y,meuse,m, na.action = na.omit))
+Error in na.fail.default(structure(list(x = c(179220, NA, 178740, 179300,  : 
+  missing values in object
+> try(krige(log(zinc)~1,~x+y,meuse,m, na.action = na.exclude))
+Error in na.fail.default(structure(list(x = c(179220, NA, 178740, 179300,  : 
+  missing values in object
+> try(krige(log(zinc)~1,~x+y,meuse,m, na.action = na.fail))
+Error in na.fail.default(structure(list(x = c(179220, NA, 178740, 179300,  : 
+  missing values in object
+> 
+> # select 10 random rows;
+> # create two missing values in the regressor variable:
+> m = meuse.grid[sample(nrow(meuse.grid), 10), ]
+> m[c(3,7), "dist"] = NA
+> krige(log(zinc)~dist,~x+y,meuse,m, na.action = na.pass)
+[ordinary or weighted least squares prediction]
+        x      y var1.pred  var1.var
+1  178860 330860  6.530134 0.2415196
+2  180260 331860  5.389567 0.2406041
+3  180100 331860        NA        NA
+4  180460 331820  5.213370 0.2417197
+5  179660 330580  5.550859 0.2398778
+6  179740 330300  6.108648 0.2395392
+7  180220 330660        NA        NA
+8  178580 329820  6.533801 0.2415453
+9  180100 331900  5.580264 0.2397758
+10 180780 331900  5.095967 0.2426499
+> krige(log(zinc)~dist,~x+y,meuse,m, na.action = na.omit)
+[ordinary or weighted least squares prediction]
+          x      y var1.pred  var1.var
+1877 178860 330860  6.530134 0.2415196
+1015 180260 331860  5.389567 0.2406041
+1056 180460 331820  5.213370 0.2417197
+2199 179660 330580  5.550859 0.2398778
+2556 179740 330300  6.108648 0.2395392
+2985 178580 329820  6.533801 0.2415453
+975  180100 331900  5.580264 0.2397758
+992  180780 331900  5.095967 0.2426499
+> krige(log(zinc)~dist,~x+y,meuse,m, na.action = na.exclude)
+[ordinary or weighted least squares prediction]
+          x      y var1.pred  var1.var
+1877 178860 330860  6.530134 0.2415196
+1015 180260 331860  5.389567 0.2406041
+1056 180460 331820  5.213370 0.2417197
+2199 179660 330580  5.550859 0.2398778
+2556 179740 330300  6.108648 0.2395392
+2985 178580 329820  6.533801 0.2415453
+975  180100 331900  5.580264 0.2397758
+992  180780 331900  5.095967 0.2426499
+> try(krige(log(zinc)~dist,~x+y,meuse,m, na.action = na.fail))
+Error in na.fail.default(structure(list(dist = c(0.00135803, 0.423804,  : 
+  missing values in object
+> 
+> proc.time()
+   user  system elapsed 
+  0.490   0.047   0.528 

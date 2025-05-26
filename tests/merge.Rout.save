@@ -1,0 +1,297 @@
+
+R version 4.2.0 (2022-04-22) -- "Vigorous Calisthenics"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(digits=6)
+> # illustrates the use of merge, for merging parameters accross variables:
+> # Z1=m+e1(s)
+> # Z2=m+e2(s)
+> # Z1 and Z2 each have a different variogram, but share the parameter m
+> # see documentation of gstat() function
+> library(gstat)
+> d1 = data.frame(x=c(0,2),y=c(0,0),z=c(0,1))
+> d2 = data.frame(x=c(0,2),y=c(2,2),z=c(4,5))
+> g = gstat(NULL,"d1", z~1,~x+y,d1,model=vgm(1, "Exp", 1))
+> g = gstat(g,"d2", z~1,~x+y,d2,model=vgm(1, "Exp", 1), merge=c("d1","d2"))
+> g = gstat(g, c("d1", "d2"), model = vgm(0.5, "Exp", 1))
+> predict(g, data.frame(x=1,y=1), debug = 32)
+Intrinsic Correlation found. Good.
+[using ordinary cokriging]
+we're at location X: 1 Y: 1 Z: 0
+zero block size
+we're at point X: 1 Y: 1 Z: 0
+
+# X:
+#Matrix: 4 by 1
+rbind(
+c( 1.000000), # row 1
+c( 1.000000), # row 2
+c( 1.000000), # row 3
+c( 1.000000)  # row 4
+)
+[using generalized covariances: max_val - semivariance()]
+# Covariances (x_i, x_j) matrix C (upper triangle):
+#Matrix: 4 by 4
+rbind(
+c( 1.000000,  0.135335,  0.067668,  0.029553), # row 1
+c( 0.135335,  1.000000,  0.029553,  0.067668), # row 2
+c( 0.067668,  0.029553,  1.000000,  0.135335), # row 3
+c( 0.029553,  0.067668,  0.135335,  1.000000)  # row 4
+)
+
+# glm->C, Choleski decomposed::
+#Matrix: 4 by 4
+rbind(
+c( 1.000000,  0.135335,  0.067668,  0.029553), # row 1
+c( 0.000000,  0.990800,  0.020584,  0.064259), # row 2
+c( 0.000000,  0.000000,  0.997496,  0.132344), # row 3
+c( 0.000000,  0.000000,  0.000000,  0.988677)  # row 4
+)
+
+# X'C-1 X:
+#Matrix: 1 by 1
+rbind(
+c( 3.245289)  # row 1
+)
+
+# beta:
+#Vector: dim: 1
+c( 2.500000)
+# Cov(beta), (X'C-1 X)-1:
+#Matrix: 1 by 1
+rbind(
+c( 0.308139)  # row 1
+)
+
+# Corr(beta):
+#Matrix: 1 by 1
+rbind(
+c( 1.000000)  # row 1
+)
+
+# X0 (X values at prediction location x0):
+#Matrix: 1 by 2
+rbind(
+c( 1.000000,  1.000000)  # row 1
+)
+
+# BLUE(mu), E(y(x0)) = X0'beta:
+#Vector: dim: 2
+c( 2.500000,  2.500000)
+# Covariances (x_i, x_0), C0:
+#Matrix: 4 by 2
+rbind(
+c( 0.243117,  0.121558), # row 1
+c( 0.243117,  0.121558), # row 2
+c( 0.121558,  0.243117), # row 3
+c( 0.121558,  0.243117)  # row 4
+)
+
+# C-1 C0:
+#Matrix: 4 by 2
+rbind(
+c( 0.206482,  0.089387), # row 1
+c( 0.206482,  0.089387), # row 2
+c( 0.089387,  0.206482), # row 3
+c( 0.089387,  0.206482)  # row 4
+)
+
+# [a] Cov_ij(B,B) or Cov_ij(0,0):
+#Matrix: 2 by 2
+rbind(
+c( 1.000000,  0.500000), # row 1
+c( 0.500000,  1.000000)  # row 2
+)
+
+# [c] (x0-X'C-1 c0)'(X'C-1 X)-1(x0-X'C-1 c0):
+#Matrix: 2 by 2
+rbind(
+c( 0.051360,  0.051360), # row 1
+c( 0.051360,  0.051360)  # row 2
+)
+
+# [b] c0'C-1 c0:
+#Matrix: 2 by 2
+rbind(
+c( 0.122130,  0.093662), # row 1
+c( 0.093662,  0.122130)  # row 2
+)
+
+# Best Linear Unbiased Predictor:
+#Vector: dim: 2
+c( 2.031619,  2.968381)
+# MSPE ([a]-[b]+[c]):
+#Matrix: 2 by 2
+rbind(
+c( 0.929230,  0.457698), # row 1
+c( 0.457698,  0.929230)  # row 2
+)
+
+# kriging weights:
+#Matrix: 4 by 2
+rbind(
+c( 0.308548,  0.191452), # row 1
+c( 0.308548,  0.191452), # row 2
+c( 0.191452,  0.308548), # row 3
+c( 0.191452,  0.308548)  # row 4
+)
+
+
+  x y d1.pred  d1.var d2.pred  d2.var cov.d1.d2
+1 1 1 2.03162 0.92923 2.96838 0.92923  0.457698
+> 
+> # Z1 and Z2 share a regression slope:
+> g = gstat(NULL,"d1", z~x,~x+y,d1,model=vgm(1, "Exp", 1))
+> g = gstat(g,"d2", z~x,~x+y,d2,model=vgm(1, "Exp", 1), 
++ 	merge=list(c("d1",2,"d2",2)))
+> g = gstat(g, c("d1", "d2"), model = vgm(0.5, "Exp", 1))
+> predict(g, data.frame(x=1,y=1), debug = 32)
+Intrinsic Correlation found. Good.
+[using universal cokriging]
+we're at location X: 1 Y: 1 Z: 0
+zero block size
+we're at point X: 1 Y: 1 Z: 0
+
+# X:
+#Matrix: 4 by 3
+rbind(
+c( 1.000000,  0.000000,  0.000000), # row 1
+c( 1.000000,  2.000000,  0.000000), # row 2
+c( 0.000000,  0.000000,  1.000000), # row 3
+c( 0.000000,  2.000000,  1.000000)  # row 4
+)
+[using generalized covariances: max_val - semivariance()]
+# Covariances (x_i, x_j) matrix C (upper triangle):
+#Matrix: 4 by 4
+rbind(
+c( 1.000000,  0.135335,  0.067668,  0.029553), # row 1
+c( 0.135335,  1.000000,  0.029553,  0.067668), # row 2
+c( 0.067668,  0.029553,  1.000000,  0.135335), # row 3
+c( 0.029553,  0.067668,  0.135335,  1.000000)  # row 4
+)
+
+# glm->C, Choleski decomposed::
+#Matrix: 4 by 4
+rbind(
+c( 1.000000,  0.135335,  0.067668,  0.029553), # row 1
+c( 0.000000,  0.990800,  0.020584,  0.064259), # row 2
+c( 0.000000,  0.000000,  0.997496,  0.132344), # row 3
+c( 0.000000,  0.000000,  0.000000,  0.988677)  # row 4
+)
+
+# X'C-1 X:
+#Matrix: 3 by 3
+rbind(
+c( 1.774607,  1.622645, -0.151962), # row 1
+c( 1.622645,  7.676050,  1.622645), # row 2
+c(-0.151962,  1.622645,  1.774607)  # row 3
+)
+
+# beta:
+#Vector: dim: 3
+c( 0.000000,  0.500000,  4.000000)
+# Cov(beta), (X'C-1 X)-1:
+#Matrix: 3 by 3
+rbind(
+c( 0.793363, -0.225695,  0.274305), # row 1
+c(-0.225695,  0.225695, -0.225695), # row 2
+c( 0.274305, -0.225695,  0.793363)  # row 3
+)
+
+# Corr(beta):
+#Matrix: 3 by 3
+rbind(
+c( 1.000000, -0.533366,  0.345750), # row 1
+c(-0.533366,  1.000000, -0.533366), # row 2
+c( 0.345750, -0.533366,  1.000000)  # row 3
+)
+
+# X0 (X values at prediction location x0):
+#Matrix: 3 by 2
+rbind(
+c( 1.000000,  0.000000), # row 1
+c( 1.000000,  1.000000), # row 2
+c( 0.000000,  1.000000)  # row 3
+)
+
+# BLUE(mu), E(y(x0)) = X0'beta:
+#Vector: dim: 2
+c( 0.500000,  4.500000)
+# Covariances (x_i, x_0), C0:
+#Matrix: 4 by 2
+rbind(
+c( 0.243117,  0.121558), # row 1
+c( 0.243117,  0.121558), # row 2
+c( 0.121558,  0.243117), # row 3
+c( 0.121558,  0.243117)  # row 4
+)
+
+# C-1 C0:
+#Matrix: 4 by 2
+rbind(
+c( 0.206482,  0.089387), # row 1
+c( 0.206482,  0.089387), # row 2
+c( 0.089387,  0.206482), # row 3
+c( 0.089387,  0.206482)  # row 4
+)
+
+# [a] Cov_ij(B,B) or Cov_ij(0,0):
+#Matrix: 2 by 2
+rbind(
+c( 1.000000,  0.500000), # row 1
+c( 0.500000,  1.000000)  # row 2
+)
+
+# [c] (x0-X'C-1 c0)'(X'C-1 X)-1(x0-X'C-1 c0):
+#Matrix: 2 by 2
+rbind(
+c( 0.203564, -0.100844), # row 1
+c(-0.100844,  0.203564)  # row 2
+)
+
+# [b] c0'C-1 c0:
+#Matrix: 2 by 2
+rbind(
+c( 0.122130,  0.093662), # row 1
+c( 0.093662,  0.122130)  # row 2
+)
+
+# Best Linear Unbiased Predictor:
+#Vector: dim: 2
+c( 0.500000,  4.500000)
+# MSPE ([a]-[b]+[c]):
+#Matrix: 2 by 2
+rbind(
+c( 1.081434,  0.305494), # row 1
+c( 0.305494,  1.081434)  # row 2
+)
+
+# kriging weights:
+#Matrix: 4 by 2
+rbind(
+c( 0.500000,  0.000000), # row 1
+c( 0.500000,  0.000000), # row 2
+c( 0.000000,  0.500000), # row 3
+c( 0.000000,  0.500000)  # row 4
+)
+
+
+  x y d1.pred  d1.var d2.pred  d2.var cov.d1.d2
+1 1 1     0.5 1.08143     4.5 1.08143  0.305494
+> 
+> proc.time()
+   user  system elapsed 
+  0.551   0.044   0.588 
