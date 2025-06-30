@@ -482,4 +482,4 @@ sample    1   5     NA    NA sim1,...,sim5
 > 
 > proc.time()
    user  system elapsed 
-  6.345   7.688   5.462 
+  6.205   8.037   5.303 
