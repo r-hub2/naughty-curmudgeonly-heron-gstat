@@ -1,5 +1,5 @@
 Package: gstat
-Version: 2.1-3
+Version: 2.1-4
 Title: Spatial and Spatio-Temporal Geostatistical Modelling, Prediction
         and Simulation
 Authors@R: c(person(given = "Edzer", 
@@ -21,7 +21,7 @@ Encoding: UTF-8
 BugReports: https://github.com/r-spatial/gstat/issues/
 NeedsCompilation: yes
 RoxygenNote: 6.1.1
-Packaged: 2025-05-26 16:07:23 UTC; edzer
+Packaged: 2025-06-30 15:42:58 UTC; edzer
 Author: Edzer Pebesma [aut, cre] (ORCID:
     <https://orcid.org/0000-0001-8049-7069>),
   Benedikt Graeler [aut]
